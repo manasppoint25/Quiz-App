@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Time</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</head>
+<body class="bg-light">
+    <div class="row bg-dark">
+        <center><h1 class="text-light display-5">Quiz Time!!! <span id="time" style="color: green; font-weight: 900;"></span></h1></center>
+    </div>
+
+    <div class="container bg-light mt-3">
+        <div class="row">
+            <center><h1 class="display-6" id="Ques"></h1></center>
+        </div>
+        <div class="container row mt-3">
+            <div class="col-6"><center><input type="radio" name="answer" onclick="setval('a')" id="ao"><span id="a" style="font-size: 23px; padding-left: 5px;"></span></center></div>
+            <div class="col-6"><center><input type="radio" name="answer" onclick="setval('b')" id="bo"><span id="b" style="font-size: 23px; padding-left: 5px;"></span></center></div>
+        </div>
+        <div class="container row">
+            <div class="col-6"><center><input type="radio" name="answer" onclick="setval('c')" id="co"><span id="c" style="font-size: 23px; padding-left: 5px;"></span></center></div>
+            <div class="col-6"><center><input type="radio" name="answer" onclick="setval('d')" id="do"><span id="d" style="font-size: 23px; padding-left: 5px;"></span></center></div>
+        </div>
+        <div class="row">
+            <center><button class="btn btn-success mt-5" onclick="nexxt()" id="nex">Next</button></center>
+            <center><button class="btn btn-success mt-5" onclick="nexxt()" id="Sub" style="display: none;">Submit</button></center>
+        </div>
+    </div>
+    <h2 id="r"></h2>
+    <h2 id="attempt"></h2>
+    <h2 id="wr"></h2>
+    <h2 id="nat"></h2>
+
+    <script>
+        var corr = 0;
+        var currentIndex = 0; 
+        var timer;
+        var char = '';
+        var at = 0;
+        var nat=-1
+        var wr = 0;
+        
+        var data = [
+            { q: 'What is JavaScript?', a: 'A language', b: 'A logic', c: 'A platform', d: 'None', ans: 'a' },
+            { q: 'What is Java?', a: 'A platform', b: 'A logic', c: 'A language', d: 'None', ans: 'c' },
+            { q: 'What is Unix?', a: 'A language', b: 'A logic', c: 'A platform', d: 'None', ans: 'c' },
+            { q: 'What is Python?', a: 'A language', b: 'A logic', c: 'A platform', d: 'None', ans: 'a' },
+            { q: 'What is SQL?', a: 'A language', b: 'A logic', c: 'A platform', d: 'A database language', ans: 'd' },
+            { q: 'What is C?', a: 'A language', b: 'A logic', c: 'A platform', d: 'None', ans: 'a' },
+            { q: 'What is Postman?', a: 'A language', b: 'A logic', c: 'A platform', d: 'A tool', ans: 'd' },
+            { q: 'What are hooks?', a: 'A language', b: 'A logic', c: 'A platform', d: 'None', ans: 'd' },
+            { q: 'What is CSS?', a: 'Cascading style', b: 'A logic', c: 'A platform', d: 'None', ans: 'a' },
+            { q: 'What is HTML?', a: 'A tag language', b: 'A logic', c: 'A platform', d: 'None', ans: 'a' }
+        ];
+
+        function nexxt() {
+            if (char === data[currentIndex].ans) {
+                corr++;
+            } else {
+                wr++;
+                // corr -= 1;
+            }
+            currentIndex++;
+            show(currentIndex);
+        }
+
+        function setval(n) {
+            char = n;
+            
+        }
+
+        function show(index) {
+            clearInterval(timer);
+            const aRadio = document.getElementById('ao');
+            const bRadio = document.getElementById('bo');
+            const cRadio = document.getElementById('co');
+            const dRadio = document.getElementById('do');
+
+            if (aRadio.checked || bRadio.checked || cRadio.checked || dRadio.checked) {
+                console.log('Option selected: ');
+                at++
+            } else {
+                console.log('No option selected');
+                nat++
+                console.log(nat)
+                
+            }
+           
+            if (index > data.length - 2) {
+                document.getElementById('Sub').style.display = 'block';
+                document.getElementById('nex').style.display = "none";
+                if (index > data.length - 1) {
+                    wr=wr-nat
+                    document.getElementById('r').innerText = 'Final Result: ' + corr;
+                    document.getElementById('attempt').innerText = 'Attempted Questions: ' + at;
+                    document.getElementById('wr').innerText='Wrong Answers' + wr
+                    document.getElementById('nat').innerText='Not Attempted' + nat
+
+                    return;
+                }
+            }
+
+            document.getElementsByName('answer').forEach((input) => {
+                input.checked = false;
+            });
+            let question = data[index];
+            document.getElementById('Ques').innerText = question.q;
+            document.getElementById('a').innerText = question.a;
+            document.getElementById('b').innerText = question.b;
+            document.getElementById('c').innerText = question.c;
+            document.getElementById('d').innerText = question.d;
+
+            var count = 10;
+            document.getElementById('time').innerText = count;
+
+            timer = setInterval(function () {
+                count--;
+                document.getElementById('time').innerText = count;
+                if (count <= 0) {
+                    clearInterval(timer);
+                    nexxt();
+                }
+            }, 1000);
+        }
+
+        show(currentIndex);
+    </script>
+</body>
+</html>
